@@ -1,0 +1,70 @@
+{
+  "project_info": {
+    "project_number": "144995374291",
+    "firebase_url": "https://emdadul-gas-service-default-rtdb.firebaseio.com",
+    "project_id": "emdadul-gas-service",
+    "storage_bucket": "emdadul-gas-service.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:144995374291:android:dda28a9603a2b7880a7026",
+        "android_client_info": {
+          "package_name": "lpg.emdadul.mokardder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "144995374291-droelf8ae0vi490v7bifo76k5jah1v1u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBK6HwNIsHKWY0OZSuggWpw8M1PqKXYrzE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "144995374291-droelf8ae0vi490v7bifo76k5jah1v1u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-4113410244453408~4131819101"
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:144995374291:android:5edf1e81b8c8ba080a7026",
+        "android_client_info": {
+          "package_name": "vip.mokardder.smsclient"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "144995374291-droelf8ae0vi490v7bifo76k5jah1v1u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBK6HwNIsHKWY0OZSuggWpw8M1PqKXYrzE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "144995374291-droelf8ae0vi490v7bifo76k5jah1v1u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
