@@ -15,6 +15,7 @@ import android.telephony.SmsManager;
 import android.util.Log;
 import android.widget.Toast;
 
+
 import com.jaredrummler.android.device.DeviceName;
 
 import java.util.ArrayList;
