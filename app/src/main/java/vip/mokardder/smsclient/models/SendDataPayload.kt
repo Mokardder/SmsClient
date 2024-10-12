@@ -13,3 +13,9 @@ data class SendQoutaUpdate(
     val qouta: String,
     val type: String,
 )
+
+data class dacPayload(
+    val dac: String = "",        // Default value for dac
+    val cashmemo: String = "",   // Default value for cashmemo
+    val timeStamp: String = ""    // Default value for timeStamp
+)

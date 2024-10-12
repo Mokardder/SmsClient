@@ -11,7 +11,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.telephony.SmsManager;
 
 import android.util.Log;
@@ -34,19 +36,24 @@ import vip.mokardder.smsclient.apiInterface.API;
 import vip.mokardder.smsclient.models.ResponseModel;
 import vip.mokardder.smsclient.models.SendDataPayload;
 import vip.mokardder.smsclient.retrofitClient.RetrofitClient;
+import vip.mokardder.smsclient.services.DisplayOverService;
 
 
 public class MainActivity extends AppCompatActivity {
     public static String TAG = "Mokardder===>";
-    String SENT = "SMS_SENT";
-    String DELIVERED = "SMS_DELIVERED";
 
-    TextView btn_send;
+
+    Window popupWindow;
+
+    TextView btn_start;
 
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        popupWindow = new Window(this);
+        checkOverlayPermission();
+
         setContentView(R.layout.activity_main);
         XXPermissions.with(this)
                 // Request single permission
@@ -63,54 +70,89 @@ public class MainActivity extends AppCompatActivity {
                     toast("Granted");
                 });
 
-        btn_send = findViewById(R.id.send_sms);
+        btn_start = findViewById(R.id.start_service);
 
 
-        btn_send.setOnClickListener(v -> {
 
+        btn_start.setOnClickListener(v -> {
+            startService();
         });
+
 
 
         initFirebase();
 
-        registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context arg0, Intent arg1) {
-                switch (getResultCode()) {
-                    case Activity.RESULT_OK ->
-                            Toast.makeText(getBaseContext(), "Sms Sent", Toast.LENGTH_SHORT).show();
-                    case SmsManager.RESULT_ERROR_GENERIC_FAILURE ->
-                            Toast.makeText(getBaseContext(), "Generic failure",
-                                    Toast.LENGTH_SHORT).show();
-                    case SmsManager.RESULT_ERROR_NO_SERVICE ->
-                            Toast.makeText(getBaseContext(), "No service",
-                                    Toast.LENGTH_SHORT).show();
-                    case SmsManager.RESULT_ERROR_NULL_PDU ->
-                            Toast.makeText(getBaseContext(), "Null PDU",
-                                    Toast.LENGTH_SHORT).show();
-                    case SmsManager.RESULT_ERROR_RADIO_OFF ->
-                            Toast.makeText(getBaseContext(), "Radio off",
-                                    Toast.LENGTH_SHORT).show();
-                }
-            }
-        }, new IntentFilter(SENT));
-
-
-        registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context arg0, Intent arg1) {
-                switch (getResultCode()) {
-                    case Activity.RESULT_OK ->
-                            Toast.makeText(getBaseContext(), "Sms Delivered", Toast.LENGTH_SHORT).show();
-                    case Activity.RESULT_CANCELED ->
-                            Toast.makeText(getBaseContext(), "SMS not delivered",
-                                    Toast.LENGTH_SHORT).show();
-                }
-            }
-        }, new IntentFilter(DELIVERED));
+//        registerReceiver(new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context arg0, Intent arg1) {
+//                switch (getResultCode()) {
+//                    case Activity.RESULT_OK ->
+//                            Toast.makeText(getBaseContext(), "Sms Sent", Toast.LENGTH_SHORT).show();
+//                    case SmsManager.RESULT_ERROR_GENERIC_FAILURE ->
+//                            Toast.makeText(getBaseContext(), "Generic failure",
+//                                    Toast.LENGTH_SHORT).show();
+//                    case SmsManager.RESULT_ERROR_NO_SERVICE ->
+//                            Toast.makeText(getBaseContext(), "No service",
+//                                    Toast.LENGTH_SHORT).show();
+//                    case SmsManager.RESULT_ERROR_NULL_PDU ->
+//                            Toast.makeText(getBaseContext(), "Null PDU",
+//                                    Toast.LENGTH_SHORT).show();
+//                    case SmsManager.RESULT_ERROR_RADIO_OFF ->
+//                            Toast.makeText(getBaseContext(), "Radio off",
+//                                    Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        }, new IntentFilter(SENT));
+//
+//
+//        registerReceiver(new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context arg0, Intent arg1) {
+//                switch (getResultCode()) {
+//                    case Activity.RESULT_OK ->
+//                            Toast.makeText(getBaseContext(), "Sms Delivered", Toast.LENGTH_SHORT).show();
+//                    case Activity.RESULT_CANCELED ->
+//                            Toast.makeText(getBaseContext(), "SMS not delivered",
+//                                    Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        }, new IntentFilter(DELIVERED));
 
 
     }
+
+    public void startService(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // check if the user has already granted
+            // the Draw over other apps permission
+            if(Settings.canDrawOverlays(this)) {
+                // start the service based on the android version
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(new Intent(this, DisplayOverService.class));
+                } else {
+                    startService(new Intent(this, DisplayOverService.class));
+
+                    popupWindow.open();
+                }
+            }
+        }else{
+            startService(new Intent(this, DisplayOverService.class));
+        }
+    }
+
+    // method to ask user to grant the Overlay permission
+    public void checkOverlayPermission(){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                // send user to the device settings
+                Intent myIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                startActivity(myIntent);
+            }
+        }
+    }
+
+
 
     private void initFirebase() {
         FirebaseApp.initializeApp(this);

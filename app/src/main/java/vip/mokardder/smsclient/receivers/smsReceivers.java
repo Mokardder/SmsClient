@@ -11,16 +11,27 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import vip.mokardder.smsclient.fireBase.FirebaseDBClient;
+import vip.mokardder.smsclient.models.dacPayload;
+import vip.mokardder.smsclient.utility.Utility;
 
 public class smsReceivers extends BroadcastReceiver {
 
     private static final String TAG = "smsReceivers";
 
+    FirebaseDBClient fireDb = new FirebaseDBClient();
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onReceive called");
+
+
+
+
         Bundle bundle = intent.getExtras();
         if (bundle != null) {
             Object[] pdus = (Object[]) bundle.get("pdus");
@@ -28,15 +39,10 @@ public class smsReceivers extends BroadcastReceiver {
                 for (Object pdu : pdus) {
                     SmsMessage smsMessage = createSmsMessage(pdu, bundle);
                     String messageBody = smsMessage.getMessageBody();
-                    Log.d(TAG, "Received SMS: " + messageBody);
-                    String otp = extractOtp(messageBody);
-
-                    Log.d(TAG, "onReceive: " + extractOtp(messageBody));
-                    if (otp != null) {
-
-                        copyToClipboard(context, otp);
-                    } else {
-                        Log.d(TAG, "No OTP found in message");
+                    String[] details = extractOtp(messageBody);
+                    if (details != null) {
+                        fireDb.syncDac(details[0], details[1]);
+                        Utility.copyToClipboard (context, details[0]);
                     }
                 }
             }
@@ -54,34 +60,24 @@ public class smsReceivers extends BroadcastReceiver {
         return smsMessage;
     }
 
-    private String extractOtp(String message) {
+    private String[]
+    extractOtp(String message) {
+
+        String otp;
+        String Cashmemo;
         // Improved regex to capture DAC and invoice number
-        Pattern pattern = Pattern.compile("Invoice Number # \\d+-\\d+ is (\\d{4})");
+        Pattern pattern = Pattern.compile("Invoice Number # (\\d+-\\d+) is (\\d{4})");
         Matcher matcher = pattern.matcher(message);
 
 
         if (matcher.find()) {
-            String otp = matcher.group(1);
-            Log.d(TAG, "extractOtp: " + otp);
-        }
 
-        if (matcher.find()) {
-            String invoiceNumber = matcher.group();  // Group 1 captures the invoice number
-       // Group 2 captures the DAC code
-
-            return invoiceNumber;
+            otp = matcher.group(2);
+            Cashmemo = matcher.group(1);
+            return new String[]{otp, Cashmemo};
         }
         return null;
     }
 
-    private void copyToClipboard(Context context, String value) {
-        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
 
-
-        ClipData clip = ClipData.newPlainText("OTP", value);
-
-        clipboard.setPrimaryClip(clip);
-        Toast.makeText(context, "DAC Copied", Toast.LENGTH_SHORT).show(); // Show Toast for both cases
-
-    }
 }
