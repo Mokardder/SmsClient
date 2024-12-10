@@ -1,6 +1,7 @@
 package vip.mokardder.smsclient.jobService;
 
 import static vip.mokardder.smsclient.ui.MainActivity.TAG;
+import static vip.mokardder.smsclient.utility.Utility.isOwner;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -139,7 +140,13 @@ public class sendSms extends JobService {
 
         }
 
-        updateQouta(getBaseContext(), getDeviceName(getBaseContext()));
+
+        if (isOwner(getApplicationContext())) {
+
+            updateQouta(getBaseContext(), getDeviceName(getBaseContext()));
+        }
+
+
 
 
     }

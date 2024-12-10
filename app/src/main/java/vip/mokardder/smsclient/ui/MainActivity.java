@@ -1,13 +1,18 @@
 package vip.mokardder.smsclient.ui;
 
 
+import static vip.mokardder.smsclient.utility.Utility.isOwner;
+import static vip.mokardder.smsclient.utility.Utility.saveSelectedOption;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 
@@ -17,6 +22,8 @@ import android.provider.Settings;
 import android.telephony.SmsManager;
 
 import android.util.Log;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +44,7 @@ import vip.mokardder.smsclient.models.ResponseModel;
 import vip.mokardder.smsclient.models.SendDataPayload;
 import vip.mokardder.smsclient.retrofitClient.RetrofitClient;
 import vip.mokardder.smsclient.services.DisplayOverService;
+import vip.mokardder.smsclient.utility.Utility;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -74,6 +82,10 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+
+
+
         btn_start.setOnClickListener(v -> {
             startService();
         });
@@ -81,6 +93,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         initFirebase();
+
+
+        if (Utility.getOptions(this) == 0){
+            checkIfSender();
+        }
+
+
 
 //        registerReceiver(new BroadcastReceiver() {
 //            @Override
@@ -167,17 +186,11 @@ public class MainActivity extends AppCompatActivity {
                     }
 
 
-
                     Log.d(TAG, "initFirebase: Token: " + task.getResult());
-                    uploadFCM(getApplicationContext(), task.getResult(), getDeviceName(getBaseContext()));
-
-
+                    if (isOwner(MainActivity.this)){
+                        uploadFCM(getApplicationContext(), task.getResult(), getDeviceName(getBaseContext()));
+                    }
                 });
-
-
-
-
-
     }
     public void uploadFCM(Context c, String fcm, String  dName) {
         Log.d(TAG, "uploadFCM: Init");
@@ -202,6 +215,46 @@ public class MainActivity extends AppCompatActivity {
         DeviceName.init(c);
         return DeviceName.getDeviceName();
     };
+
+    private void checkIfSender () {
+        // Create the radio buttons
+        RadioButton radioButton1 = new RadioButton(this);
+        radioButton1.setText("Owner");
+
+        RadioButton radioButton2 = new RadioButton(this);
+        radioButton2.setText("Client");
+
+        // Create a RadioGroup to hold the buttons
+        RadioGroup radioGroup = new RadioGroup(this);
+        radioGroup.addView(radioButton1);
+        radioGroup.addView(radioButton2);
+
+        // Create a dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose an Option");
+        builder.setView(radioGroup);
+
+        // Add "OK" button to the dialog
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            int selectedId = radioGroup.getCheckedRadioButtonId();
+
+            // Show a toast message based on the selected option
+            if (selectedId == radioButton1.getId()) {
+                Toast.makeText(MainActivity.this, "Owner", Toast.LENGTH_SHORT).show();
+                saveSelectedOption(MainActivity.this, 1);
+            } else if (selectedId == radioButton2.getId()) {
+                Toast.makeText(MainActivity.this, "Client", Toast.LENGTH_SHORT).show();
+                saveSelectedOption(MainActivity.this, 2);
+            }
+        });
+
+        // Add "Cancel" button to the dialog
+        builder.setNegativeButton("Cancel", null);
+
+        // Show the dialog
+        builder.create().show();
+    }
+
 
 
     private void toast(String s) {

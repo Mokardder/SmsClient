@@ -11,6 +11,7 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -28,6 +29,8 @@ public class smsReceivers extends BroadcastReceiver {
     FirebaseDBClient fireDb = new FirebaseDBClient();
     @Override
     public void onReceive(Context context, Intent intent) {
+
+        FirebaseApp.initializeApp(context);
 
 
 
