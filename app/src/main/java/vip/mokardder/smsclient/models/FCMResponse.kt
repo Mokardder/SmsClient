@@ -6,15 +6,11 @@ import com.google.gson.reflect.TypeToken
 
 
 data class FCMResponse(
-    val action: String,
-    @SerializedName("smsData") private val smsDataString: String
-) {
-    val smsData: List<SmsData>
-        get() = Gson().fromJson(smsDataString, object : TypeToken<List<SmsData>>() {}.type)
-}
+    @SerializedName("smsData") val smsData: SmsData,
+    @SerializedName("action") val action: String
+)
 
 data class SmsData(
-    val number: String,
-    @SerializedName("UserName") val userName: String,
-    @SerializedName("smsMessage") val smsMessage: String
+    @SerializedName("smsMessage") val smsMessage: String,
+    @SerializedName("number") val number: String
 )
