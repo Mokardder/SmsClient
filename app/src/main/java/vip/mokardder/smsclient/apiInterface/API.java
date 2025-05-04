@@ -10,9 +10,11 @@ import vip.mokardder.smsclient.models.SendQoutaUpdate;
 
 public interface API {
 
-
-        @POST("AKfycbxxIgVG1KMdx3SYiJ3MoIeuRxW7tVlnlzyphSwQDAVRAJX9lqEzcTiE8CZNvMlWnev0/exec")
+/*
+        @POST("AKfycbxxIgVG1KMdx3SYiJ3Mo--*------*-----VRAJX9lqEzcTiE8CZNvMlWnev0/exec")
         Call<ResponseModel> uploadFcm (@Body SendDataPayload payload);
-        @POST("AKfycbxxIgVG1KMdx3SYiJ3MoIeuRxW7tVlnlzyphSwQDAVRAJX9lqEzcTiE8CZNvMlWnev0/exec")
+        @POST("AKfycbxxIgVG1KMdx3SYiJ3Mo--*------*-----VRAJX9lqEzcTiE8CZNvMlWnev0/exec")
         Call<ResponseModel> updateQouta (@Body SendQoutaUpdate payload);
+
+        */
 }
